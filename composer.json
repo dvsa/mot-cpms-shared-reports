@@ -1,0 +1,46 @@
+{
+    "name": "dvsa/mot-cpms-shared-reports",
+    "description": "Shared module for displaying reports",
+    "license": "MIT",
+    "type": "library",
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packages.mot.dvsacloud.uk/"
+        }
+    ],
+    "require": {
+        "php": "^7.3 || ^8.0",
+        "cpms/client": "^3.13",
+        "laminas/laminas-mvc": "^3.1",
+        "laminas/laminas-dependency-plugin": "^2.2"
+    },
+    "require-dev": {
+        "cpms/payment-test": "^2.3",
+        "dvsa/mot-cpms-common": "^1.0",
+        "captainhook/captainhook": "^5.16",
+        "captainhook/plugin-composer": "^5.3",
+        "phpunit/phpunit": "9.5"
+    },
+    "autoload": {
+        "psr-0": {
+            "SharedReport\\": "src/",
+            "SharedReportTest\\": "test/"
+        },
+        "classmap": [
+            "./Module.php",
+            "./test/SharedReportTest/Module.php"
+        ]
+    },
+    "scripts": {
+        "test": [
+            "phpunit"
+        ]
+    },
+    "config": {
+        "allow-plugins": {
+            "laminas/laminas-dependency-plugin": true,
+            "captainhook/plugin-composer": true
+        }
+    }
+}

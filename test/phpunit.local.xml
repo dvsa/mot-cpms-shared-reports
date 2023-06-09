@@ -1,0 +1,19 @@
+<phpunit bootstrap="./Bootstrap.php"
+         colors="true"
+         stopOnFailure="false"
+         beStrictAboutTestSize="false"
+         timeoutForSmallTests="60"
+         timeoutForMediumTests="150"
+         timeoutForLargeTests="600"
+        >
+    <testsuites>
+        <testsuite name="Shared Reports Test Suite">
+            <directory>./CpmsReportTest</directory>
+        </testsuite>
+    </testsuites>
+    <coverage>
+    <include>
+        <directory suffix=".php">src</directory>
+    </include>
+    </coverage>
+</phpunit>
