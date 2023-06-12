@@ -12,7 +12,7 @@ composer require dvsa/mot-cpms-shared-reports
 ## Usage
 
 --- REPORT WORKER ---
-This is a hack to run cron job every 5 second
+This is a hack to run the cron job every 5 second
 
 * * * * * /usr/bin/php /workspace/payment-service/public/index.php report generate
 * * * * * sleep 5 && /usr/bin/php /workspace/payment-service/public/index.php report generate

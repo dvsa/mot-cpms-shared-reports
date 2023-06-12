@@ -1,7 +1,7 @@
 {
     "name": "dvsa/mot-cpms-shared-reports",
     "description": "Shared module for displaying reports",
-    "license": "MIT",
+    "license": "proprietary",
     "type": "library",
     "repositories": [
         {
@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "php": "^7.3 || ^8.0",
+        "php": "^7.4 || ^8.0",
         "cpms/client": "^3.13",
         "laminas/laminas-mvc": "^3.1",
         "laminas/laminas-dependency-plugin": "^2.2"
