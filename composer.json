@@ -20,7 +20,7 @@
         "dvsa/mot-cpms-common": "^1.0",
         "captainhook/captainhook": "^5.16",
         "captainhook/plugin-composer": "^5.3",
-        "phpunit/phpunit": "9.5"
+        "phpunit/phpunit": "^9.5"
     },
     "autoload": {
         "psr-0": {
