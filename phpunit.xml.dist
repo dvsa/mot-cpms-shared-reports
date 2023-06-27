@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<phpunit bootstrap="./test/Bootstrap.php"
+         colors="true"
+         stopOnFailure="false"
+         timeoutForSmallTests="300"
+         timeoutForMediumTests="600"
+         timeoutForLargeTests="1200"
+        >
+    <testsuites>
+        <testsuite name="Shared Reports Test Suite">
+            <directory>./test/SharedReportTest</directory>
+        </testsuite>
+    </testsuites>
+    <coverage>
+    <include>
+        <directory suffix=".php">src</directory>
+    </include>
+        <report>
+            <html outputDirectory="review/code-coverage"/>
+            <clover outputFile="review/logs/phpunit.xml"/>
+        </report>
+    </coverage>
+    <logging>
+        <junit outputFile="review/logs/phpunit-junit.xml"/>
+        <testdoxHtml outputFile="review/testdox.html"/>
+        <testdoxText outputFile="review/testdox.txt"/>
+    </logging>
+    <php>
+        <ini name="memory_limit" value="-1"/>
+    </php>
+</phpunit>

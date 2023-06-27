@@ -1,0 +1,11 @@
+/vendor
+.idea
+build/
+review/
+*local.php
+.DS_Store
+/nbproject
+*.tar.gz
+*.csv
+composer.phar
+.phpunit.result.cache

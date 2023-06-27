@@ -1,0 +1,40 @@
+{
+    "name": "dvsa/mot-cpms-shared-reports",
+    "description": "Shared module for displaying reports",
+    "license": "proprietary",
+    "type": "library",
+    "require": {
+        "php": "^8.0",
+        "dvsa/mot-cpms-client": "^1.0",
+        "laminas/laminas-mvc": "^3.1",
+        "laminas/laminas-dependency-plugin": "^2.2"
+    },
+    "require-dev": {
+        "dvsa/mot-cpms-payment-test": "^1.0",
+        "dvsa/mot-cpms-common": "^1.0",
+        "captainhook/captainhook": "^5.16",
+        "captainhook/plugin-composer": "^5.3",
+        "phpunit/phpunit": "^9.5"
+    },
+    "autoload": {
+        "psr-0": {
+            "SharedReport\\": "src/",
+            "SharedReportTest\\": "test/"
+        },
+        "classmap": [
+            "./Module.php",
+            "./test/SharedReportTest/Module.php"
+        ]
+    },
+    "scripts": {
+        "test": [
+            "phpunit"
+        ]
+    },
+    "config": {
+        "allow-plugins": {
+            "laminas/laminas-dependency-plugin": true,
+            "captainhook/plugin-composer": true
+        }
+    }
+}
