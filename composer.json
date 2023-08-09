@@ -10,7 +10,7 @@
         "laminas/laminas-dependency-plugin": "^2.2"
     },
     "require-dev": {
-        "dvsa/mot-cpms-payment-test": "^1.0",
+        "dvsa/mot-cpms-payment-test": "^1.0.1",
         "dvsa/mot-cpms-common": "^1.0",
         "captainhook/captainhook": "^5.16",
         "captainhook/plugin-composer": "^5.3",
