@@ -18,6 +18,7 @@ class ReportStatus
     private $toDateFilter;
     private $readyForDownload;
     private $downloadFileSize;
+    private $reportDetails;
 
     /**
      * @param string            $reference

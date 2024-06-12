@@ -21,8 +21,7 @@ class CpmsRestTest extends TestCase
 
     public function setUp(): void
     {
-        $this->apiServiceMock = $this->getMockBuilder('CpmsClient\Service\ApiService')
-            ->getMock();
+        $this->apiServiceMock = $this->createMock('CpmsClient\Service\ApiService');
         $this->client         = new CpmsRest($this->apiServiceMock);
     }
 
