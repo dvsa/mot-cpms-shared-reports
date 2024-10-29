@@ -6,7 +6,7 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.2",
-        "dvsa/mot-cpms-client": "^3.1.0",
+        "dvsa/mot-cpms-client": "dev-feature-bl-15040-code-linting",
         "laminas/laminas-mvc": "^3.1",
         "laminas/laminas-dependency-plugin": "^2.6.0"
     },
