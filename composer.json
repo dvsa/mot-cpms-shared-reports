@@ -11,8 +11,8 @@
         "laminas/laminas-dependency-plugin": "^2.6.0"
     },
     "require-dev": {
-        "dvsa/mot-cpms-payment-test": "^3.0.0",
-        "dvsa/mot-cpms-common": "^3.0.0",
+        "dvsa/mot-cpms-payment-test": "dev-feature-bl-15043-linting-and-static-analysis",
+        "dvsa/mot-cpms-common": "dev-feature-bl-15043-linting-and-static-analysis",
         "captainhook/captainhook": "^5.16",
         "captainhook/plugin-composer": "^5.3",
         "phpunit/phpunit": "^9.5"
