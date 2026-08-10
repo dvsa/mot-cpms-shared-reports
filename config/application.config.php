@@ -17,7 +17,6 @@ return array(
         'Laminas\Hydrator',
         'Laminas\Cache',
         'Laminas\Filter',
-        'Laminas\Log',
         'Laminas\Router',
         'Laminas\Validator',
         'CpmsClient',
