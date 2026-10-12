@@ -1,9 +1,20 @@
 <?php
 
-return array(
-    'logger' => array(
-        'filename' => \date('Y-m-d') . '-cpms-reports.log',
-        'location'       => '/var/log/dvsa', // log location
-        'channel'        => 'cpms-reports',
-    ),
-);
+return [
+    'mot_logger' => [
+        'loggers' => [
+            'cpms-reports' => [
+                'channel' => 'cpms-reports',
+                'writers' => [
+                    [
+                        'type' => 'stream',
+                        'path' => '/var/log/dvsa/' . \date('Y-m-d') . '-cpms-reports.log',
+                        'formatter' => 'json',
+                        'level' => 'info',
+                        'enabled' => true,
+                    ],
+                ],
+            ],
+        ],
+    ],
+];

@@ -3,13 +3,13 @@
 namespace SharedReport;
 
 return [
-    'router'          => array(
-        'routes' => array(
-        ),
-    ),
+    'router' => [
+        'routes' => [
+        ],
+    ],
 
-    'service_manager' => array(
-        'abstract_factories' => array(
-        ),
-    ),
+    'service_manager' => [
+        'abstract_factories' => [
+        ],
+    ],
 ];
