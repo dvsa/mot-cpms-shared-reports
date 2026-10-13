@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SharedReportTest\Adapter\Response;
 
 use PHPUnit\Framework\TestCase;
@@ -10,16 +12,16 @@ use SharedReport\Adapter\Response\AvailableReports;
  *
  * @package SharedReportTest\Adapter\Response
  */
-class AvailableReportsTest extends TestCase
+final class AvailableReportsTest extends TestCase
 {
-    public function testIsNotFailedWhenSuccessTrue()
+    public function testIsNotFailedWhenSuccessTrue(): void
     {
         $response = new AvailableReports(true);
         $this->assertTrue($response->isSuccess());
         $this->assertFalse($response->isFailure());
     }
 
-    public function testIsFailedWhenSuccessFalse()
+    public function testIsFailedWhenSuccessFalse(): void
     {
         $response = new AvailableReports(false);
         $this->assertFalse($response->isSuccess());

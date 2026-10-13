@@ -14,7 +14,7 @@ interface FileHandlerInterface
      *
      * @return mixed
      */
-    public function handleFile($stream);
+    public function handleFile($stream): mixed;
 
-    public function getCachedFile();
+    public function getCachedFile(): mixed;
 }

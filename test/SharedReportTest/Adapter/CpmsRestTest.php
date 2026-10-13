@@ -1,43 +1,55 @@
 <?php
 
-namespace SharedReportTest\Client;
+declare(strict_types=1);
+
+namespace SharedReportTest\Adapter;
 
 use CpmsClient\Service\ApiService;
+use Laminas\Cache\Exception\ExceptionInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use SharedReport\Adapter\ApiAdapterException;
 use SharedReport\Adapter\CpmsRest;
 use SharedReport\Adapter\Request\ReportSpecification;
+use SharedReport\Adapter\Response\AvailableReports;
+use SharedReport\Adapter\Response\ReportStatus;
 
 /**
  * Class CpmsRestTest
  *
- * @package SharedReportTest\Client
+ * @package SharedReportTest\Adapter
  */
-class CpmsRestTest extends TestCase
+final class CpmsRestTest extends TestCase
 {
-    /** @var  CpmsRest */
-    protected $client;
-    /** @var ApiService|TestCase */
-    protected $apiServiceMock;
+    protected CpmsRest $client;
+    protected ApiService&MockObject $apiServiceMock;
 
+    #[\Override]
     public function setUp(): void
     {
-        $this->apiServiceMock = $this->createMock('CpmsClient\Service\ApiService');
-        $this->client         = new CpmsRest($this->apiServiceMock);
+        $this->apiServiceMock = $this->createMock(ApiService::class);
+        $this->client = new CpmsRest($this->apiServiceMock);
     }
 
-    public function testThrowsExceptionWhenReceivingNonArrayResponses()
+    /**
+     * @throws ExceptionInterface
+     */
+    public function testThrowsExceptionWhenReceivingNonArrayResponses(): void
     {
         $this->apiServiceMock->expects($this->once())
             ->method('get')
             ->with('api/report', ApiService::SCOPE_REPORT)
             ->willReturn('response');
 
-        $this->expectException(\SharedReport\Adapter\ApiAdapterException::class);
+        $this->expectException(ApiAdapterException::class);
         $this->expectExceptionMessage("Received invalid response from API: response");
         $this->client->fetchAvailableReports();
     }
 
-    public function testThrowsExceptionWhenReceivingErrorResponse()
+    /**
+     * @throws ExceptionInterface
+     */
+    public function testThrowsExceptionWhenReceivingErrorResponse(): void
     {
         $this->apiServiceMock->expects($this->once())
             ->method('get')
@@ -49,13 +61,16 @@ class CpmsRestTest extends TestCase
                 ]
             );
 
-        $this->expectException(\SharedReport\Adapter\ApiAdapterException::class);
+        $this->expectException(ApiAdapterException::class);
         $this->expectExceptionMessage("error message here");
         $this->expectExceptionCode(777);
         $this->client->fetchAvailableReports();
     }
 
-    public function testFetchAvailableReports()
+    /**
+     * @throws ExceptionInterface
+     */
+    public function testFetchAvailableReports(): void
     {
         $this->apiServiceMock->expects($this->once())
             ->method('get')
@@ -68,11 +83,14 @@ class CpmsRestTest extends TestCase
                 ]
             );
         $reports = $this->client->fetchAvailableReports();
-        $this->assertInstanceOf('SharedReport\Adapter\Response\AvailableReports', $reports);
+        $this->assertInstanceOf(AvailableReports::class, $reports);
         $this->assertCount(1, $reports->getAvailableReports());
     }
 
-    public function testCreateReportRequest()
+    /**
+     * @throws ExceptionInterface
+     */
+    public function testCreateReportRequest(): void
     {
         $spec = new ReportSpecification('asd');
 
@@ -115,10 +133,13 @@ class CpmsRestTest extends TestCase
                 ]
             );
         $response = $this->client->createReportRequest($spec);
-        $this->assertInstanceOf('SharedReport\Adapter\Response\ReportStatus', $response);
+        $this->assertInstanceOf(ReportStatus::class, $response);
     }
 
-    public function testFetchReportContents()
+    /**
+     * @throws ExceptionInterface
+     */
+    public function testFetchReportContents(): void
     {
         $fileContent      = uniqid('file contents');
         $reportIdentifier = uniqid('ref');
@@ -132,7 +153,10 @@ class CpmsRestTest extends TestCase
         $this->assertEquals($fileContent, fgets($file));
     }
 
-    public function testFetchReportContentsWithError()
+    /**
+     * @throws ExceptionInterface
+     */
+    public function testFetchReportContentsWithError(): void
     {
         $reportIdentifier = uniqid('ref');
         $url              = 'api/report/' . $reportIdentifier . '/download';
@@ -141,7 +165,7 @@ class CpmsRestTest extends TestCase
             ->with($url, ApiService::SCOPE_REPORT)
             ->willReturn(['code' => '512', 'message' => 'a message']);
 
-        $this->expectException(\SharedReport\Adapter\ApiAdapterException::class);
+        $this->expectException(ApiAdapterException::class);
         $this->expectExceptionMessage("a message");
         $this->expectExceptionCode(512);
         $this->client->fetchReportContents($reportIdentifier);

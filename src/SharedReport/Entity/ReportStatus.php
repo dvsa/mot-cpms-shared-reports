@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SharedReport\Entity;
 
 use DateTimeInterface;
@@ -9,16 +11,16 @@ use DateTimeInterface;
  *
  * @package SharedReport\Entity
  */
-class ReportStatus
+final class ReportStatus
 {
-    private $totalRows;
-    private $processedRows;
-    private $reference;
-    private $fromDateFilter;
-    private $toDateFilter;
-    private $readyForDownload;
-    private $downloadFileSize;
-    private $reportDetails;
+    private int $totalRows;
+    private int $processedRows;
+    private string $reference;
+    private DateTimeInterface $fromDateFilter;
+    private DateTimeInterface $toDateFilter;
+    private bool $readyForDownload;
+    private int $downloadFileSize;
+    private AvailableReport $reportDetails;
 
     /**
      * @param string            $reference
@@ -31,30 +33,29 @@ class ReportStatus
      * @param int               $downloadFileSize
      */
     public function __construct(
-        $reference,
+        string $reference,
         AvailableReport $reportDetails,
         DateTimeInterface $fromDateFilter,
         DateTimeInterface $toDateFilter,
-        $totalRows,
-        $processedRows,
-        $readyForDownload,
-        $downloadFileSize
-    )
-    {
+        int $totalRows,
+        int $processedRows,
+        bool $readyForDownload,
+        int $downloadFileSize
+    ) {
         $this->reportDetails    = $reportDetails;
         $this->fromDateFilter   = $fromDateFilter;
         $this->toDateFilter     = $toDateFilter;
-        $this->totalRows        = (int)$totalRows;
-        $this->processedRows    = (int)$processedRows;
+        $this->totalRows        = $totalRows;
+        $this->processedRows    = $processedRows;
         $this->reference        = $reference;
-        $this->readyForDownload = (bool)$readyForDownload;
+        $this->readyForDownload = $readyForDownload;
         $this->downloadFileSize = $downloadFileSize;
     }
 
     /**
      * @return int
      */
-    public function getDownloadFileSize()
+    public function getDownloadFileSize(): int
     {
         return $this->downloadFileSize;
     }
@@ -62,7 +63,7 @@ class ReportStatus
     /**
      * @return int The percentage of rows processed
      */
-    public function getPercentComplete()
+    public function getPercentComplete(): int
     {
         if ($this->processedRows == $this->totalRows) {
             return 100;
@@ -77,7 +78,7 @@ class ReportStatus
     /**
      * @return bool Whether the report is complete
      */
-    public function isComplete()
+    public function isComplete(): bool
     {
         return $this->processedRows == $this->totalRows;
     }
@@ -85,7 +86,7 @@ class ReportStatus
     /**
      * @return bool Whether the report is ready for download
      */
-    public function isReadyForDownload()
+    public function isReadyForDownload(): bool
     {
         return $this->readyForDownload;
     }
@@ -93,7 +94,7 @@ class ReportStatus
     /**
      * @return string The identifier for the report
      */
-    public function getReference()
+    public function getReference(): string
     {
         return $this->reference;
     }
@@ -101,7 +102,7 @@ class ReportStatus
     /**
      * @return int
      */
-    public function getTotalRowCount()
+    public function getTotalRowCount(): int
     {
         return $this->totalRows;
     }
@@ -109,7 +110,7 @@ class ReportStatus
     /**
      * @return int
      */
-    public function getProcessedRowCount()
+    public function getProcessedRowCount(): int
     {
         return $this->processedRows;
     }
@@ -117,7 +118,7 @@ class ReportStatus
     /**
      * @return string The type of report name
      */
-    public function getReportTypeName()
+    public function getReportTypeName(): string
     {
         return $this->reportDetails->getName();
     }
@@ -125,23 +126,23 @@ class ReportStatus
     /**
      * @return string The type of report code
      */
-    public function getReportTypeCode()
+    public function getReportTypeCode(): string
     {
         return $this->reportDetails->getReference();
     }
 
     /**
-     * @return \DateTimeImmutable The From date filter
+     * @return DateTimeInterface The From date filter
      */
-    public function getFromDateFilter()
+    public function getFromDateFilter(): DateTimeInterface
     {
         return $this->fromDateFilter;
     }
 
     /**
-     * @return \DateTimeImmutable The To date filter
+     * @return DateTimeInterface The To date filter
      */
-    public function getToDateFilter()
+    public function getToDateFilter(): DateTimeInterface
     {
         return $this->toDateFilter;
     }

@@ -1,14 +1,6 @@
 <?php
 
-if (!defined('APPLICATION_ENV')) {
-    if (isset($_SERVER['APPLICATION_ENV'])) {
-        $env = $_SERVER['APPLICATION_ENV'];
-    } elseif (!$env = getenv('APPLICATION_ENV')) {
-        $env = 'production';
-    }
-
-    define('APPLICATION_ENV', $env);
-}
+$env = false === ($env = getenv('APPLICATION_ENV')) || $env === '' ? 'production' : $env;
 
 return [
     'modules' => [
@@ -33,7 +25,7 @@ return [
             './vendor',
         ],
         'config_glob_paths' => [
-            'config/autoload/{,*.}{global,' . APPLICATION_ENV . ',local}.php',
+            'config/autoload/{,*.}{global,' . $env . ',local}.php',
         ],
     ],
 ];

@@ -6,24 +6,29 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "php": "^8.2",
         "dvsa/mot-cpms-client": "dev-feature-bl-22950-update-mot-logger-version",
-        "mtdowling/jmespath.php": "^2.9.1",
+        "dvsa/mot-logger": "^3.3.1",
         "laminas/laminas-mvc": "^3.1",
         "laminas/laminas-dependency-plugin": "^2.6.0",
-        "dvsa/mot-logger": "^3.3.1"
+        "mtdowling/jmespath.php": "^2.9.1",
+        "php": "^8.2"
     },
     "require-dev": {
-        "dvsa/mot-cpms-payment-test": "^3.0.0",
-        "dvsa/mot-cpms-common": "^3.0.1",
         "captainhook/captainhook": "^5.16",
         "captainhook/plugin-composer": "^5.3",
-        "phpunit/phpunit": "^9.5"
+        "dvsa/coding-standards": "^2.1",
+        "dvsa/mot-cpms-payment-test": "^3.0.0",
+        "dvsa/mot-cpms-common": "^3.0.1",
+        "friendsofphp/php-cs-fixer": "^3.95",
+        "phpstan/phpstan": "^2.3",
+        "phpunit/phpunit": "^11.5",
+        "squizlabs/php_codesniffer": "^4.0",
+        "vimeo/psalm": "^6.20"
     },
     "autoload": {
-        "psr-0": {
-            "SharedReport\\": "src/",
-            "SharedReportTest\\": "test/"
+        "psr-4": {
+            "SharedReport\\": "src/SharedReport",
+            "SharedReportTest\\": "test/SharedReportTest"
         },
         "classmap": [
             "./Module.php",
@@ -31,11 +36,14 @@
         ]
     },
     "scripts": {
-        "test": [
-            "phpunit"
-        ]
+        "phpcs": "./vendor/bin/phpcs .",
+        "phpcs:fix": "./vendor/bin/phpcbf .",
+        "psalm": "./vendor/bin/psalm --no-cache",
+        "phpstan": "./vendor/bin/phpstan analyse --memory-limit=1G",
+        "test": "./vendor/bin/phpunit -c phpunit.xml"
     },
     "config": {
+        "optimize-autoloader": true,
         "allow-plugins": {
             "laminas/laminas-dependency-plugin": true,
             "captainhook/plugin-composer": true

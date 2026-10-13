@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SharedReport\Adapter;
 
 use SharedReport\Adapter\Request\ReportSpecification;
@@ -18,7 +20,7 @@ interface ReportServiceAdapterInterface
      *
      * @return AvailableReports
      */
-    public function fetchAvailableReports();
+    public function fetchAvailableReports(): AvailableReports;
 
     /**
      * Requests a report from the API
@@ -27,7 +29,7 @@ interface ReportServiceAdapterInterface
      *
      * @return ReportStatus
      */
-    public function createReportRequest(ReportSpecification $reportSpec);
+    public function createReportRequest(ReportSpecification $reportSpec): ReportStatus;
 
     /**
      * Fetches the latest status for a requested report
@@ -36,7 +38,7 @@ interface ReportServiceAdapterInterface
      *
      * @return ReportStatus
      */
-    public function fetchReportStatus($reportIdentifier);
+    public function fetchReportStatus(string|int $reportIdentifier): ReportStatus;
 
     /**
      * Fetches report contents.
@@ -45,5 +47,5 @@ interface ReportServiceAdapterInterface
      *
      * @return resource
      */
-    public function fetchReportContents($reportIdentifier);
+    public function fetchReportContents(string|int $reportIdentifier);
 }

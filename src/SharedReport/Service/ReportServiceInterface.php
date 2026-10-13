@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SharedReport\Service;
 
+use SharedReport\Entity\AvailableReport;
 use SharedReport\Entity\ReportStatus;
 
 /**
@@ -12,26 +15,26 @@ use SharedReport\Entity\ReportStatus;
 interface ReportServiceInterface
 {
     /**
-     * @return @return array|AvailableReport[]
+     * @return array<AvailableReport>
      */
-    public function getAvailableReports();
+    public function getAvailableReports(): array;
 
     /**
-     * @param $reportTypeReference
-     * @param $format
-     * @param $fromDate
-     * @param $toDate
+     * @param string $reportTypeReference
+     * @param string $format
+     * @param string $fromDate
+     * @param string $toDate
      *
      * @return ReportStatus
      */
-    public function createReport($reportTypeReference, $format, $fromDate, $toDate);
+    public function createReport(string $reportTypeReference, string $format, string $fromDate, string $toDate): ReportStatus;
 
     /**
-     * @param $reportReference
+     * @param string|int $reportReference
      *
      * @return ReportStatus
      */
-    public function getStatus($reportReference);
+    public function getStatus(string|int $reportReference): ReportStatus;
 
     /**
      * Get the output file
@@ -40,5 +43,5 @@ interface ReportServiceInterface
      *
      * @return mixed
      */
-    public function getOutputFile($reportIdentifier);
+    public function getOutputFile(string $reportIdentifier): mixed;
 }

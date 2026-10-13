@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SharedReport\Service;
 
 use SharedReport\Adapter\ReportServiceAdapterInterface;
@@ -14,15 +16,12 @@ use SharedReport\Service\FileHandler\FileHandlerInterface;
  *
  * @package SharedReport\Service
  */
-class ReportService implements ReportServiceInterface
+final class ReportService implements ReportServiceInterface
 {
-    protected $client;
-    /** @var  FileHandlerInterface */
-    protected $fileHandler;
+    protected ?FileHandlerInterface $fileHandler = null;
 
-    public function __construct(ReportServiceAdapterInterface $client)
+    public function __construct(private readonly ReportServiceAdapterInterface $client)
     {
-        $this->client = $client;
     }
 
     /**
@@ -36,7 +35,8 @@ class ReportService implements ReportServiceInterface
      * @return ReportStatus The status of the newly created report
      * @throws \Exception
      */
-    public function createReport($reportTypeReference, $format, $fromDate, $toDate)
+    #[\Override]
+    public function createReport(string $reportTypeReference, string $format, string $fromDate, string $toDate): ReportStatus
     {
         // As the dates will be having their times altered, the timezone can be set to UTC
         $fromDate = new \DateTimeImmutable($fromDate, new \DateTimeZone('UTC'));
@@ -55,9 +55,10 @@ class ReportService implements ReportServiceInterface
     }
 
     /**
-     * @return array|AvailableReport[]
+     * @return array<AvailableReport>
      */
-    public function getAvailableReports()
+    #[\Override]
+    public function getAvailableReports(): array
     {
         $response = $this->client->fetchAvailableReports();
 
@@ -67,18 +68,19 @@ class ReportService implements ReportServiceInterface
     /**
      * Get the status of a specific report
      *
-     * @param $reportIdentifier
+     * @param string|int $reportReference
      *
      * @return ReportStatus
      */
-    public function getStatus($reportIdentifier)
+    #[\Override]
+    public function getStatus(string|int $reportReference): ReportStatus
     {
-        $response = $this->client->fetchReportStatus($reportIdentifier);
+        $response = $this->client->fetchReportStatus($reportReference);
 
         return $this->getStatusFromResponse($response);
     }
 
-    protected function getStatusFromResponse(ReportStatusResponse $response)
+    protected function getStatusFromResponse(ReportStatusResponse $response): ReportStatus
     {
         $reportDetails = new AvailableReport(
             $response->getReportTypeName(),
@@ -104,9 +106,10 @@ class ReportService implements ReportServiceInterface
      *
      * @return mixed Response from File Handler
      */
-    public function getOutputFile($reportIdentifier)
+    #[\Override]
+    public function getOutputFile(string $reportIdentifier): mixed
     {
-        if (!$this->fileHandler instanceof FileHandlerInterface) {
+        if (!isset($this->fileHandler)) {
             throw new \RuntimeException('File Handler strategy not defined.');
         }
         $file = $this->fileHandler->getCachedFile();
@@ -123,7 +126,7 @@ class ReportService implements ReportServiceInterface
      *
      * @param FileHandlerInterface $fileHandler
      */
-    public function setFileHandler(FileHandlerInterface $fileHandler)
+    public function setFileHandler(FileHandlerInterface $fileHandler): void
     {
         $this->fileHandler = $fileHandler;
     }

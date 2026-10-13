@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SharedReport\Adapter\Response;
 
 use SharedReport\Entity\AvailableReport;
@@ -9,22 +11,28 @@ use SharedReport\Entity\AvailableReport;
  *
  * @package SharedReport\Adapter\Response
  */
-class AvailableReports extends AbstractResponse
+final class AvailableReports extends AbstractResponse
 {
-    protected $success;
-    private $availableReports = [];
+    protected bool $success;
+    /**
+     * @var AvailableReport[]
+     */
+    private array $availableReports = [];
 
-    public function __construct($success)
+    public function __construct(bool $success)
     {
         $this->success = $success;
     }
 
-    public function addReport($name, $reference, $description = '')
+    public function addReport(string $name, string $reference, string $description = ''): void
     {
         $this->availableReports[] = new AvailableReport($name, $reference, $description);
     }
 
-    public function getAvailableReports()
+    /**
+     * @return AvailableReport[]
+     */
+    public function getAvailableReports(): array
     {
         return $this->availableReports;
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SharedReport\Service\FileHandler;
 
 /**
@@ -9,14 +11,16 @@ namespace SharedReport\Service\FileHandler;
  *
  * @package SharedReport\Service\FileHandler
  */
-class PassThrough implements FileHandlerInterface
+final class PassThrough implements FileHandlerInterface
 {
     /**
-     * @param resource $stream
+     * @param mixed $stream
      *
      * @return mixed
+     * @psalm-suppress PossiblyUnusedReturnValue
      */
-    public function handleFile($stream)
+    #[\Override]
+    public function handleFile($stream): mixed
     {
         if (is_resource($stream) === false) {
             throw new \InvalidArgumentException('Expected a resource');
@@ -30,7 +34,8 @@ class PassThrough implements FileHandlerInterface
      *
      * @return bool
      */
-    public function getCachedFile()
+    #[\Override]
+    public function getCachedFile(): bool
     {
         return false;
     }

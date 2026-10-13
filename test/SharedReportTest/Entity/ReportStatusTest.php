@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SharedReportTest\Entity;
 
 use DateTimeImmutable;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SharedReport\Entity\AvailableReport;
 use SharedReport\Entity\ReportStatus;
@@ -12,22 +15,36 @@ use SharedReport\Entity\ReportStatus;
  *
  * @package SharedReportTest\Entity
  */
-class ReportStatusTest extends TestCase
+final class ReportStatusTest extends TestCase
 {
-    public function testIsReadyForDownloadIsIndependentOfIsComplete()
+    public function testIsReadyForDownloadIsIndependentOfIsComplete(): void
     {
         $reportDetails = new AvailableReport('type', '1234');
         $status        = new ReportStatus(
-            'asd', $reportDetails, new DateTimeImmutable(), new DateTimeImmutable(), 1, 1, false, 0
+            'asd',
+            $reportDetails,
+            new DateTimeImmutable(),
+            new DateTimeImmutable(),
+            1,
+            1,
+            false,
+            0
         );
         $this->assertFalse($status->isReadyForDownload());
         $status = new ReportStatus(
-            'asd', $reportDetails, new DateTimeImmutable(), new DateTimeImmutable(), 1, 0, true, 0
+            'asd',
+            $reportDetails,
+            new DateTimeImmutable(),
+            new DateTimeImmutable(),
+            1,
+            0,
+            true,
+            0
         );
         $this->assertTrue($status->isReadyForDownload());
     }
 
-    public function testGetters()
+    public function testGetters(): void
     {
         $status = new ReportStatus(
             'asd',
@@ -43,12 +60,11 @@ class ReportStatusTest extends TestCase
     }
 
     /**
-     * @dataProvider rowCountsProvider
-     *
-     * @param $processedRows
-     * @param $totalRows
+     * @param int $processedRows
+     * @param int $totalRows
      */
-    public function testCalculatesPercentageCompleteCorrectly($processedRows, $totalRows)
+    #[DataProvider('rowCountsProvider')]
+    public function testCalculatesPercentageCompleteCorrectly(int $processedRows, int $totalRows): void
     {
         $status = new ReportStatus(
             'test',
@@ -70,7 +86,10 @@ class ReportStatusTest extends TestCase
         $this->assertSame($expected, $status->getPercentComplete());
     }
 
-    public function rowCountsProvider()
+    /**
+     * @return array<int, array<int, int>>
+     */
+    public static function rowCountsProvider(): array
     {
         return [
             [0, 0],

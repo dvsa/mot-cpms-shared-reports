@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SharedReportTest\Service\FileHandler;
 
 use PHPUnit\Framework\TestCase;
@@ -10,18 +12,19 @@ use SharedReport\Service\FileHandler\StoreLocally;
  *
  * @package SharedReportTest\Service\FileHandler
  */
-class StoreLocallyTest extends TestCase
+final class StoreLocallyTest extends TestCase
 {
-    public function testThrowsExceptionIfNotPassedAStream()
+    public function testThrowsExceptionIfNotPassedAStream(): void
     {
         $filename = uniqid('/tmp/test');
         $handler  = new StoreLocally($filename);
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage("Expected a resource");
+        /** @psalm-suppress InvalidArgument */
         $handler->handleFile('string');
     }
 
-    public function testThrowsExceptionIfFileCannotBeCreated()
+    public function testThrowsExceptionIfFileCannotBeCreated(): void
     {
         $filename = uniqid('/tmp/test') . '/what?/file';
         $handler  = new StoreLocally($filename);
@@ -30,11 +33,14 @@ class StoreLocallyTest extends TestCase
         $handler->handleFile(fopen('php://memory', 'w+'));
     }
 
-    public function testHandleFile()
+    public function testHandleFile(): void
     {
         $filename = uniqid('/tmp/test');
         $contents = uniqid('test-content');
+        /* @var resource|false $stream */
         $stream   = fopen('php://temp', 'w+');
+        $this->assertIsResource($stream);
+        /** @var resource $stream */
         fwrite($stream, $contents);
         $handler = new StoreLocally($filename);
         $handler->handleFile($stream);
@@ -42,19 +48,22 @@ class StoreLocallyTest extends TestCase
         $this->assertEquals($contents, file_get_contents($filename));
     }
 
-    public function testTruncatesFileIfItExistsAlreadyWhenWriting()
+    public function testTruncatesFileIfItExistsAlreadyWhenWriting(): void
     {
         $filename = uniqid('/tmp/test');
         file_put_contents($filename, 'some data');
         $handler  = new StoreLocally($filename);
+        /* @var resource|false $stream */
         $stream   = fopen('php://temp', 'w+');
+        $this->assertIsResource($stream);
+        /** @var resource $stream */
         $contents = uniqid('test-content');
         fwrite($stream, $contents);
         $handler->handleFile($stream);
         $this->assertEquals($contents, file_get_contents($filename));
     }
 
-    public function testGetCachedFileReturnsFilenameWhenFileExists()
+    public function testGetCachedFileReturnsFilenameWhenFileExists(): void
     {
         $filename = uniqid('/tmp/test');
         touch($filename);
@@ -62,7 +71,7 @@ class StoreLocallyTest extends TestCase
         $this->assertEquals($filename, $handler->getCachedFile());
     }
 
-    public function testGetCachedFileReturnsFalseWhenFileDoesNotExist()
+    public function testGetCachedFileReturnsFalseWhenFileDoesNotExist(): void
     {
         $filename = uniqid('/tmp/test');
         $handler  = new StoreLocally($filename);

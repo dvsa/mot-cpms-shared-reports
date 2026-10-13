@@ -14,13 +14,22 @@ use PHPUnit\Framework\TestCase;
  *
  * @package SharedReportTest
  */
-class ModuleConfigTest extends TestCase
+final class ModuleConfigTest extends TestCase
 {
-    private array $config;
+    /**
+     * @var array<string, mixed> $config
+     */
+    private array $config = [];
 
+    #[\Override]
     public function setUp(): void
     {
-        $this->config = include __DIR__ . '/../../config/application.config.php';
+        $config = include __DIR__ . '/../../config/application.config.php';
+        if (!is_array($config)) {
+            $this->fail('application config did not return an array');
+        }
+        /** @var array<string,mixed> $config */
+        $this->config = $config;
     }
 
     public function testApplicationConfigHasModules(): void
@@ -35,25 +44,29 @@ class ModuleConfigTest extends TestCase
 
     public function testDvsaLoggerModuleIsLoaded(): void
     {
+        $modules = isset($this->config['modules']) && is_array($this->config['modules']) ? $this->config['modules'] : [];
+
         $this->assertContains(
             'DvsaLogger',
-            $this->config['modules'],
+            $modules,
             'DvsaLogger module is required for mot-logger integration but not loaded'
         );
     }
 
     public function testSharedReportModuleIsLoaded(): void
     {
+        $modules = isset($this->config['modules']) && is_array($this->config['modules']) ? $this->config['modules'] : [];
+
         $this->assertContains(
             'SharedReport',
-            $this->config['modules'],
+            $modules,
             'SharedReport module should be loaded'
         );
     }
 
     public function testDvsaLoggerLoadedBeforeSharedReport(): void
     {
-        $modules = $this->config['modules'];
+        $modules = isset($this->config['modules']) && is_array($this->config['modules']) ? $this->config['modules'] : [];
         $dvsaLoggerPos = array_search('DvsaLogger', $modules);
         $sharedReportPos = array_search('SharedReport', $modules);
 
@@ -66,34 +79,54 @@ class ModuleConfigTest extends TestCase
 
     public function testModuleListenerOptionsExist(): void
     {
+        $this->assertNotEmpty($this->getModuleListenerOptions());
+    }
+
+    public function testModulePathsConfigured(): void
+    {
+        $options = $this->getModuleListenerOptions();
+
+        $this->assertArrayHasKey(
+            'module_paths',
+            $options,
+            'module_paths not configured'
+        );
+
+        $this->assertIsArray($options['module_paths']);
+        $this->assertNotEmpty($options['module_paths']);
+    }
+
+    public function testConfigGlobPathsConfigured(): void
+    {
+        $options = $this->getModuleListenerOptions();
+
+        $this->assertArrayHasKey(
+            'config_glob_paths',
+            $options,
+            'config_glob_paths not configured'
+        );
+
+        $this->assertIsArray($options['config_glob_paths']);
+        $this->assertNotEmpty($options['config_glob_paths']);
+    }
+
+    /**
+     * Helper to return module_listener_options as an asserted array
+     *
+     * @return array<string,mixed>
+     */
+    private function getModuleListenerOptions(): array
+    {
         $this->assertArrayHasKey(
             'module_listener_options',
             $this->config,
             'module_listener_options not found in application config'
         );
-    }
 
-    public function testModulePathsConfigured(): void
-    {
-        $this->assertArrayHasKey(
-            'module_paths',
-            $this->config['module_listener_options'],
-            'module_paths not configured'
-        );
+        $options = $this->config['module_listener_options'] ?? null;
+        $this->assertIsArray($options, 'module_listener_options must be an array');
 
-        $this->assertIsArray($this->config['module_listener_options']['module_paths']);
-        $this->assertNotEmpty($this->config['module_listener_options']['module_paths']);
-    }
-
-    public function testConfigGlobPathsConfigured(): void
-    {
-        $this->assertArrayHasKey(
-            'config_glob_paths',
-            $this->config['module_listener_options'],
-            'config_glob_paths not configured'
-        );
-
-        $this->assertIsArray($this->config['module_listener_options']['config_glob_paths']);
-        $this->assertNotEmpty($this->config['module_listener_options']['config_glob_paths']);
+        /** @var array<string,mixed> $options */
+        return $options;
     }
 }

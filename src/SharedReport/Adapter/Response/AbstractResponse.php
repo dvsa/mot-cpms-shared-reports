@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SharedReport\Adapter\Response;
 
 /**
@@ -9,15 +11,15 @@ namespace SharedReport\Adapter\Response;
  */
 abstract class AbstractResponse
 {
-    protected $success;
+    protected bool $success;
 
-    public function isSuccess()
+    public function isSuccess(): bool
     {
         return $this->success;
     }
 
-    public function isFailure()
+    public function isFailure(): bool
     {
-        return $this->success != true;
+        return $this->success !== true;
     }
 }
