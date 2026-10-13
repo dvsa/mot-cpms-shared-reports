@@ -10,7 +10,6 @@ if ($path === false) {
 
 chdir(dirname($path));
 
-
 $bootstrap = SharedReportTest\Bootstrap::getInstance();
 
 $bootstrap->init($path, array('SharedReportTest'));

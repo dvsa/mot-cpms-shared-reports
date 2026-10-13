@@ -138,9 +138,4 @@ final class Bootstrap
 
         return $srcDir . '/' . $path;
     }
-
-    private function __clone()
-    {
-        // Prevent cloning to preserve the singleton invariant.
-    }
 }
