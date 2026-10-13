@@ -1,6 +1,7 @@
 <?php
 
-$env = false === ($env = getenv('APPLICATION_ENV')) || $env === '' ? 'production' : $env;
+$env = $_SERVER['APPLICATION_ENV'] ?? getenv('APPLICATION_ENV');
+$env = !is_string($env) || $env === '' ? 'production' : $env;
 
 return [
     'modules' => [

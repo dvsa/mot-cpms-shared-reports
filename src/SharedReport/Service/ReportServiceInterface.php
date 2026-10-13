@@ -39,9 +39,9 @@ interface ReportServiceInterface
     /**
      * Get the output file
      *
-     * @param string $reportIdentifier
+     * @param string|int $reportIdentifier
      *
      * @return mixed
      */
-    public function getOutputFile(string $reportIdentifier): mixed;
+    public function getOutputFile(string|int $reportIdentifier): mixed;
 }

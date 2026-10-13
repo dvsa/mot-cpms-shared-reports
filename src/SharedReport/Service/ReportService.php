@@ -102,12 +102,12 @@ final class ReportService implements ReportServiceInterface
     /**
      * Get the output file, after processing by whatever file handler has been configured for the service.
      *
-     * @param string $reportIdentifier
+     * @param string|int $reportIdentifier
      *
      * @return mixed Response from File Handler
      */
     #[\Override]
-    public function getOutputFile(string $reportIdentifier): mixed
+    public function getOutputFile(string|int $reportIdentifier): mixed
     {
         if (!isset($this->fileHandler)) {
             throw new \RuntimeException('File Handler strategy not defined.');

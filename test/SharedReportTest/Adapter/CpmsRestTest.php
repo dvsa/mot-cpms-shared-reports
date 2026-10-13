@@ -170,4 +170,21 @@ final class CpmsRestTest extends TestCase
         $this->expectExceptionCode(512);
         $this->client->fetchReportContents($reportIdentifier);
     }
+
+    /**
+     * @throws ExceptionInterface
+     */
+    public function testFetchReportContentsRejectsInvalidPayload(): void
+    {
+        $reportIdentifier = uniqid('ref');
+        $url = 'api/report/' . $reportIdentifier . '/download';
+        $this->apiServiceMock->expects($this->once())
+            ->method('get')
+            ->with($url, ApiService::SCOPE_REPORT)
+            ->willReturn(null);
+
+        $this->expectException(ApiAdapterException::class);
+        $this->expectExceptionMessage('Received invalid report contents from API');
+        $this->client->fetchReportContents($reportIdentifier);
+    }
 }

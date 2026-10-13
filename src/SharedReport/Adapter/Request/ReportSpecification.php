@@ -6,6 +6,7 @@ namespace SharedReport\Adapter\Request;
 
 use DateTimeImmutable;
 use DateTimeInterface;
+use DateTimeZone;
 
 /**
  * Class ReportSpecification
@@ -61,11 +62,12 @@ final class ReportSpecification
     /**
      * Sets date filters. Automatically converts them to UTC internally.
      *
-     * @param DateTimeImmutable $fromDate
-     * @param DateTimeImmutable $toDate
+     * @param DateTimeInterface $fromDate
+     * @param DateTimeInterface $toDate
      *
+     * @throws \Exception
      */
-    public function setDateFilters(DateTimeImmutable $fromDate, DateTimeImmutable $toDate): void
+    public function setDateFilters(DateTimeInterface $fromDate, DateTimeInterface $toDate): void
     {
         if ($toDate->getTimestamp() > time()) {
             throw new \InvalidArgumentException('To date cannot be in the future');
@@ -74,7 +76,7 @@ final class ReportSpecification
             throw new \InvalidArgumentException('From date must be before To date');
         }
 
-        $this->toDate   = $toDate->setTimezone(new \DateTimeZone('UTC'));
-        $this->fromDate = $fromDate->setTimezone(new \DateTimeZone('UTC'));
+        $this->toDate   = new DateTimeImmutable($toDate->format('Y-m-d H:i:s'), new DateTimeZone('UTC'));
+        $this->fromDate = new DateTimeImmutable($fromDate->format('Y-m-d H:i:s'), new DateTimeZone('UTC'));
     }
 }

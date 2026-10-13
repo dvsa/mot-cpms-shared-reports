@@ -109,9 +109,12 @@ final class CpmsRest implements ReportServiceAdapterInterface
         $response = $this->apiService->post($endpoint, ApiService::SCOPE_REPORT, $data);
         $this->validateResponse($response);
 
-        /** @var array{reference:mixed} $response */
-        $reference = isset($response['reference']) && is_scalar($response['reference']) ? (string)$response['reference'] : '';
-        return $this->fetchReportStatus($reference);
+        $reference = $response['reference'] ?? '';
+        if (is_scalar($reference) === false) {
+            $reference = '';
+        }
+
+        return $this->fetchReportStatus((string) $reference);
     }
 
     /**
@@ -131,6 +134,7 @@ final class CpmsRest implements ReportServiceAdapterInterface
         $response = $this->apiService->get($endpoint, ApiService::SCOPE_REPORT);
         $this->validateResponse($response);
 
+        /** @var array<string,mixed> $response */
         $reportType = isset($response['report_type']) && is_string($response['report_type']) ? $response['report_type'] : '';
         $reportTypeCode = isset($response['report_type_code']) && is_scalar($response['report_type_code']) ? (string) $response['report_type_code'] : '';
 
@@ -171,19 +175,24 @@ final class CpmsRest implements ReportServiceAdapterInterface
     {
         $endpoint = "api/report/$reportIdentifier/download";
         $response = $this->apiService->get($endpoint, ApiService::SCOPE_REPORT);
+
         if (is_array($response)) {
             $msg = isset($response['message']) && is_string($response['message']) ? $response['message'] : '';
             $code = isset($response['code']) && (is_int($response['code']) || is_numeric($response['code'])) ? (int)$response['code'] : 0;
             throw new ApiAdapterException($msg, $code);
         }
 
+        if (is_string($response) === false) {
+            throw new ApiAdapterException('Received invalid report contents from API');
+        }
+
         $file = fopen('php://temp', 'w+');
+
         if ($file === false) {
             throw new ApiAdapterException('Could not open temporary stream');
         }
 
-        $content = is_scalar($response) ? (string) $response : '';
-        fwrite($file, $content);
+        fwrite($file, $response);
         rewind($file);
 
         return $file;
@@ -197,13 +206,13 @@ final class CpmsRest implements ReportServiceAdapterInterface
     protected function validateResponse(mixed $response): void
     {
         if (is_array($response) === false) {
-            $msg = is_scalar($response) ? htmlentities((string) $response) : '';
-            throw new ApiAdapterException('Received invalid response from API: ' . $msg);
+            $message = is_scalar($response) ? htmlentities((string) $response) : '';
+            throw new ApiAdapterException('Received invalid response from API: ' . $message);
         }
         if (array_key_exists('code', $response) && $response['code'] != '000') {
-            $msg = isset($response['message']) && is_string($response['message']) ? $response['message'] : '';
+            $message = isset($response['message']) && is_string($response['message']) ? $response['message'] : '';
             $code = isset($response['code']) && (is_int($response['code']) || is_numeric($response['code'])) ? (int)$response['code'] : 0;
-            throw new ApiAdapterException($msg, $code);
+            throw new ApiAdapterException($message, $code);
         }
     }
 
