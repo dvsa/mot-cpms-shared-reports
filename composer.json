@@ -6,7 +6,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "dvsa/mot-cpms-client": "dev-feature-bl-22950-update-mot-logger-version",
+        "dvsa/mot-cpms-client": "^3.1.3",
         "dvsa/mot-logger": "^3.3.1",
         "laminas/laminas-mvc": "^3.1",
         "laminas/laminas-dependency-plugin": "^2.6.0",
