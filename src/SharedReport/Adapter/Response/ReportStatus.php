@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SharedReport\Adapter\Response;
 
 use DateTimeImmutable;
@@ -9,47 +11,46 @@ use DateTimeImmutable;
  *
  * @package SharedReport\Adapter\Response
  */
-class ReportStatus extends AbstractResponse
+final class ReportStatus extends AbstractResponse
 {
-    protected $complete;
-    protected $reference;
-    protected $totalRowCount;
-    protected $processedRowCount;
-    protected $downloadFileSize;
-    protected $reportTypeName;
-    protected $reportTypeCode;
-    protected $fromDateFilter;
-    protected $toDateFilter;
+    protected bool $complete;
+    protected string $reference;
+    protected int $totalRowCount;
+    protected int $processedRowCount;
+    protected int $downloadFileSize;
+    protected string $reportTypeName;
+    protected string $reportTypeCode;
+    protected DateTimeImmutable $fromDateFilter;
+    protected DateTimeImmutable $toDateFilter;
 
     public function __construct(
-        $success,
-        $reference,
-        $reportTypeName,
-        $reportTypeCode,
+        bool $success,
+        string $reference,
+        string $reportTypeName,
+        string $reportTypeCode,
         DateTimeImmutable $fromDateFilter,
         DateTimeImmutable $toDateFilter,
-        $complete,
-        $totalRowCount,
-        $processedRowCount,
-        $downloadFileSize
-    )
-    {
+        bool $complete,
+        int $totalRowCount,
+        int $processedRowCount,
+        int $downloadFileSize
+    ) {
         $this->success           = $success;
         $this->reference         = $reference;
         $this->reportTypeName    = $reportTypeName;
         $this->reportTypeCode    = $reportTypeCode;
         $this->fromDateFilter    = $fromDateFilter;
         $this->toDateFilter      = $toDateFilter;
-        $this->complete          = (bool)$complete;
+        $this->complete          = $complete;
         $this->totalRowCount     = $totalRowCount;
         $this->processedRowCount = $processedRowCount;
         $this->downloadFileSize  = $downloadFileSize;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
-    public function isComplete()
+    public function isComplete(): bool
     {
         return $this->complete;
     }
@@ -57,7 +58,7 @@ class ReportStatus extends AbstractResponse
     /**
      * @return string
      */
-    public function getReference()
+    public function getReference(): string
     {
         return $this->reference;
     }
@@ -65,7 +66,7 @@ class ReportStatus extends AbstractResponse
     /**
      * @return int
      */
-    public function getTotalRowCount()
+    public function getTotalRowCount(): int
     {
         return $this->totalRowCount;
     }
@@ -73,7 +74,7 @@ class ReportStatus extends AbstractResponse
     /**
      * @return int
      */
-    public function getProcessedRowCount()
+    public function getProcessedRowCount(): int
     {
         return $this->processedRowCount;
     }
@@ -81,7 +82,7 @@ class ReportStatus extends AbstractResponse
     /**
      * @return int The file download size in Bytes
      */
-    public function getDownloadFileSize()
+    public function getDownloadFileSize(): int
     {
         return $this->downloadFileSize;
     }
@@ -89,12 +90,12 @@ class ReportStatus extends AbstractResponse
     /**
      * @return string
      */
-    public function getReportTypeName()
+    public function getReportTypeName(): string
     {
         return $this->reportTypeName;
     }
 
-    public function getReportTypeCode()
+    public function getReportTypeCode(): string
     {
         return $this->reportTypeCode;
     }
@@ -102,7 +103,7 @@ class ReportStatus extends AbstractResponse
     /**
      * @return DateTimeImmutable
      */
-    public function getFromDateFilter()
+    public function getFromDateFilter(): DateTimeImmutable
     {
         return $this->fromDateFilter;
     }
@@ -110,7 +111,7 @@ class ReportStatus extends AbstractResponse
     /**
      * @return DateTimeImmutable
      */
-    public function getToDateFilter()
+    public function getToDateFilter(): DateTimeImmutable
     {
         return $this->toDateFilter;
     }

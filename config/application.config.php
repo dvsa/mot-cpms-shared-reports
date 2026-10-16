@@ -1,37 +1,32 @@
 <?php
-if (!defined('APPLICATION_ENV')) {
-    if (isset($_SERVER['APPLICATION_ENV'])) {
-        $env = $_SERVER['APPLICATION_ENV'];
-    } elseif (!$env = getenv('APPLICATION_ENV')) {
-        $env = 'production';
-    }
 
-    define('APPLICATION_ENV', $env);
-}
+$env = $_SERVER['APPLICATION_ENV'] ?? getenv('APPLICATION_ENV');
+$env = !is_string($env) || $env === '' ? 'production' : $env;
 
-return array(
-    'modules'                 => array(
-        'Laminas\Paginator',
-        'Laminas\Form',
-        'Laminas\InputFilter',
-        'Laminas\Hydrator',
-        'Laminas\Cache',
-        'Laminas\Filter',
-        'Laminas\Router',
-        'Laminas\Validator',
+return [
+    'modules' => [
         'CpmsClient',
-        'SharedReport',
         'DoctrineModule',
         'DoctrineORMModule',
+        'DvsaLogger',
         'Laminas\ApiTools\Versioning',
-    ),
-    'module_listener_options' => array(
-        'module_paths'      => array(
+        'Laminas\Cache',
+        'Laminas\InputFilter',
+        'Laminas\Filter',
+        'Laminas\Form',
+        'Laminas\Hydrator',
+        'Laminas\Paginator',
+        'Laminas\Router',
+        'Laminas\Validator',
+        'SharedReport',
+    ],
+    'module_listener_options' => [
+        'module_paths' => [
             './module',
             './vendor',
-        ),
-        'config_glob_paths' => array(
-            'config/autoload/{,*.}{global,' . APPLICATION_ENV . ',local}.php',
-        ),
-    )
-);
+        ],
+        'config_glob_paths' => [
+            'config/autoload/{,*.}{global,' . $env . ',local}.php',
+        ],
+    ],
+];

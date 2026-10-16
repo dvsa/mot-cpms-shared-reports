@@ -1,10 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SharedReport\Adapter;
 
 use CpmsClient\Service\ApiService;
 use DateTimeImmutable;
 use DateTimeZone;
+use Exception;
+use Laminas\Cache\Exception\ExceptionInterface;
 use SharedReport\Adapter\Request\ReportSpecification;
 use SharedReport\Adapter\Response\AvailableReports;
 use SharedReport\Adapter\Response\ReportStatus;
@@ -14,27 +18,26 @@ use SharedReport\Adapter\Response\ReportStatus;
  *
  * @package SharedReport\Adapter
  */
-class CpmsRest implements ReportServiceAdapterInterface
+final class CpmsRest implements ReportServiceAdapterInterface
 {
-    const START_DATE_FILTER_KEY = 'from';
-    const TO_DATE_FILTER_KEY    = 'to';
+    public const START_DATE_FILTER_KEY = 'from';
+    public const TO_DATE_FILTER_KEY    = 'to';
 
-    const REFERENCE_PREFIX = 'CPMS';
+    public const REFERENCE_PREFIX = 'CPMS';
 
-    protected $apiService;
-
-    public function __construct(ApiService $restApiService)
+    public function __construct(protected ApiService $apiService)
     {
-        $this->apiService = $restApiService;
     }
 
     /**
      * Fetches all available reports
      *
      * @return AvailableReports An array of AvailableReport objects.
-     * @throws \Exception
+     * @throws Exception
+     * @throws ExceptionInterface
      */
-    public function fetchAvailableReports()
+    #[\Override]
+    public function fetchAvailableReports(): AvailableReports
     {
         $endpoint = 'api/report';
         $params   = [
@@ -48,22 +51,32 @@ class CpmsRest implements ReportServiceAdapterInterface
         $response = $this->apiService->get($endpoint, ApiService::SCOPE_REPORT, $params);
         $this->validateResponse($response);
 
+        /** @var array{items:list<array<string,mixed>>} $response */
         $reports = new AvailableReports(true);
         foreach ($response['items'] as $row) {
-            $name = $code = $description = '';
-            if (isset($row['name'])) {
-                $name = $row['name'];
-            } elseif (isset($row['title'])) {
-                $name = $row['title'];
-            }
-            if (isset($row['code'])) {
-                $code = $row['code'];
-            }
-            if (isset($row['description'])) {
-                $description = $row['description'];
+            $nameStr = '';
+            if (isset($row['name']) && is_string($row['name'])) {
+                $nameStr = $row['name'];
+            } elseif (isset($row['title']) && is_string($row['title'])) {
+                $nameStr = $row['title'];
             }
 
-            $reports->addReport($name, $this->formatReportCode($code), $description);
+            $descriptionStr = '';
+            if (isset($row['description']) && is_string($row['description'])) {
+                $descriptionStr = $row['description'];
+            }
+
+            $codeRaw = $row['code'] ?? '';
+            if (is_array($codeRaw)) {
+                $json = json_encode($codeRaw);
+                $codeValue = isset($codeRaw['code']) && is_string($codeRaw['code']) ? $codeRaw['code'] : ($json !== false ? $json : '');
+            } elseif (is_scalar($codeRaw)) {
+                $codeValue = (string) $codeRaw;
+            } else {
+                $codeValue = '';
+            }
+
+            $reports->addReport($nameStr, $this->formatReportCode($codeValue), $descriptionStr);
         }
 
         return $reports;
@@ -72,54 +85,79 @@ class CpmsRest implements ReportServiceAdapterInterface
     /**
      * Requests a report from the API
      *
-     * @param $reportSpecRequest
+     * @param ReportSpecification $reportSpec
      *
      * @return ReportStatus
-     * @throws \Exception
+     * @throws ExceptionInterface
+     * @throws Exception
      */
-    public function createReportRequest(ReportSpecification $reportSpecRequest)
+    #[\Override]
+    public function createReportRequest(ReportSpecification $reportSpec): ReportStatus
     {
         $endpoint = 'api/report';
+        $typeRef = $reportSpec->getTypeReference();
+        $typeRefStr = is_scalar($typeRef) ? (string) $typeRef : '';
+
         $data     = [
-            'report_code' => $this->formatReportCode($reportSpecRequest->getTypeReference(), true),
-            'format'      => $reportSpecRequest->getFormat(),
+            'report_code' => $this->formatReportCode($typeRefStr, true),
+            'format'      => $reportSpec->getFormat(),
             'filters'     => [
-                'from' => $reportSpecRequest->getFromDateFilter()->format('Y-m-d H:i:s'),
-                'to'   => $reportSpecRequest->getToDateFilter()->format('Y-m-d H:i:s')
+                'from' => $reportSpec->getFromDateFilter()->format('Y-m-d H:i:s'),
+                'to'   => $reportSpec->getToDateFilter()->format('Y-m-d H:i:s')
             ]
         ];
         $response = $this->apiService->post($endpoint, ApiService::SCOPE_REPORT, $data);
         $this->validateResponse($response);
 
-        return $this->fetchReportStatus($response['reference']);
+        $reference = $response['reference'] ?? '';
+        if (is_scalar($reference) === false) {
+            $reference = '';
+        }
+
+        return $this->fetchReportStatus((string) $reference);
     }
 
     /**
      * Fetches the latest status for a requested report
      *
-     * @param $reportIdentifier
+     * @param string|int $reportIdentifier
      *
      * @return ReportStatus
-     * @throws \Exception
+     * @throws ExceptionInterface
+     * @throws Exception
      */
-    public function fetchReportStatus($reportIdentifier)
+    #[\Override]
+    public function fetchReportStatus(string|int $reportIdentifier): ReportStatus
     {
         $endpoint = "api/report/$reportIdentifier/status";
 
         $response = $this->apiService->get($endpoint, ApiService::SCOPE_REPORT);
         $this->validateResponse($response);
 
+        /** @var array<string,mixed> $response */
+        $reportType = isset($response['report_type']) && is_string($response['report_type']) ? $response['report_type'] : '';
+        $reportTypeCode = isset($response['report_type_code']) && is_scalar($response['report_type_code']) ? (string) $response['report_type_code'] : '';
+
+        $filters = is_array($response['report_filters'] ?? null) ? $response['report_filters'] : [];
+        $from = isset($filters['from']) && is_string($filters['from']) ? $filters['from'] : '';
+        $to = isset($filters['to']) && is_string($filters['to']) ? $filters['to'] : '';
+
+        $completed = isset($response['completed']) ? (bool) $response['completed'] : false;
+        $totalRows = isset($response['total_rows']) && is_numeric($response['total_rows']) ? (int) $response['total_rows'] : 0;
+        $processedRows = isset($response['processed_rows']) && is_numeric($response['processed_rows']) ? (int) $response['processed_rows'] : 0;
+        $downloadSize = isset($response['download_size']) && is_numeric($response['download_size']) ? (int) $response['download_size'] : 0;
+
         return new ReportStatus(
             empty($response['error']),
-            $reportIdentifier,
-            $response['report_type'],
-            $this->formatReportCode($response['report_type_code']),
-            new DateTimeImmutable($response['report_filters']['from'], new DateTimeZone('UTC')),
-            new DateTimeImmutable($response['report_filters']['to'], new DateTimeZone('UTC')),
-            $response['completed'],
-            $response['total_rows'],
-            $response['processed_rows'],
-            $response['download_size']
+            (string)$reportIdentifier,
+            $reportType,
+            $this->formatReportCode($reportTypeCode),
+            new DateTimeImmutable($from, new DateTimeZone('UTC')),
+            new DateTimeImmutable($to, new DateTimeZone('UTC')),
+            $completed,
+            $totalRows,
+            $processedRows,
+            $downloadSize
         );
     }
 
@@ -128,39 +166,68 @@ class CpmsRest implements ReportServiceAdapterInterface
      *
      * @param int|string $reportIdentifier
      *
-     * @return mixed
+     * @return resource
+     * @throws ExceptionInterface
+     * @throws ApiAdapterException
      */
-    public function fetchReportContents($reportIdentifier)
+    #[\Override]
+    public function fetchReportContents(int|string $reportIdentifier)
     {
         $endpoint = "api/report/$reportIdentifier/download";
         $response = $this->apiService->get($endpoint, ApiService::SCOPE_REPORT);
+
         if (is_array($response)) {
-            throw new ApiAdapterException($response['message'], $response['code']);
+            $msg = isset($response['message']) && is_string($response['message']) ? $response['message'] : '';
+            $code = isset($response['code']) && (is_int($response['code']) || is_numeric($response['code'])) ? (int)$response['code'] : 0;
+            throw new ApiAdapterException($msg, $code);
+        }
+
+        if (is_string($response) === false) {
+            throw new ApiAdapterException('Received invalid report contents from API');
         }
 
         $file = fopen('php://temp', 'w+');
+
+        if ($file === false) {
+            throw new ApiAdapterException('Could not open temporary stream');
+        }
+
         fwrite($file, $response);
         rewind($file);
 
         return $file;
     }
 
-    protected function validateResponse($response)
+    /**
+     * Validate an API response and assert that it is an array for Psalm.
+     *
+     * @psalm-assert array<string,mixed> $response
+     */
+    protected function validateResponse(mixed $response): void
     {
         if (is_array($response) === false) {
-            throw new ApiAdapterException('Received invalid response from API: ' . htmlentities($response));
+            $message = is_scalar($response) ? htmlentities((string) $response) : '';
+            throw new ApiAdapterException('Received invalid response from API: ' . $message);
         }
         if (array_key_exists('code', $response) && $response['code'] != '000') {
-            throw new ApiAdapterException($response['message'], $response['code']);
+            $message = isset($response['message']) && is_string($response['message']) ? $response['message'] : '';
+            $code = isset($response['code']) && (is_int($response['code']) || is_numeric($response['code'])) ? (int)$response['code'] : 0;
+            throw new ApiAdapterException($message, $code);
         }
     }
 
-    private function formatReportCode($code, $stripPrefix = false)
+    private function formatReportCode(string|int $code, bool $stripPrefix = false): string
     {
+        $reportCode = (string) $code;
+
         if ($stripPrefix) {
-            return str_replace(self::REFERENCE_PREFIX, '', $code);
+            if (str_starts_with($reportCode, self::REFERENCE_PREFIX)) {
+                return substr($reportCode, strlen(self::REFERENCE_PREFIX));
+            }
+
+            return $reportCode;
         }
 
-        return self::REFERENCE_PREFIX . $code;
+        return self::REFERENCE_PREFIX . $reportCode;
     }
 }

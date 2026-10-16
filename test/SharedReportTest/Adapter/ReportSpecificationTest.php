@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SharedReportTest\Adapter;
 
+use DateTimeImmutable;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use SharedReport\Adapter\Request\ReportSpecification;
 
@@ -10,9 +14,9 @@ use SharedReport\Adapter\Request\ReportSpecification;
  *
  * @package SharedReportTest\Adapter
  */
-class ReportSpecificationTest extends TestCase
+final class ReportSpecificationTest extends TestCase
 {
-    public function testCanGetTypeReference()
+    public function testCanGetTypeReference(): ReportSpecification
     {
         $spec = new ReportSpecification('testReference512');
         $this->assertSame('testReference512', $spec->getTypeReference());
@@ -20,47 +24,47 @@ class ReportSpecificationTest extends TestCase
         return $spec;
     }
 
-    public function testCannotSetToDateInFuture()
+    public function testCannotSetToDateInFuture(): void
     {
         $spec = new ReportSpecification('testReference512');
-        $date = new \DateTime('+1 second');
-        $this->expectException(\InvalidArgumentException::class);
+        $date = new DateTimeImmutable('+1 second');
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("To date cannot be in the future");
-        $spec->setDateFilters(new \DateTime('-1 month'), $date);
+        $spec->setDateFilters(new DateTimeImmutable('-1 month'), $date);
     }
 
-    public function testCannotSetFromDateToCurrentTime()
+    public function testCannotSetFromDateToCurrentTime(): void
     {
         $spec = new ReportSpecification('testReference512');
-        $date = new \DateTime();
-        $this->expectException(\InvalidArgumentException::class);
+        $date = new DateTimeImmutable();
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("From date must be before To date");
-        $spec->setDateFilters(new \DateTime(), $date);
+        $spec->setDateFilters(new DateTimeImmutable(), $date);
     }
 
-    public function testCannotSetFromDateInFuture()
+    public function testCannotSetFromDateInFuture(): void
     {
         $spec = new ReportSpecification('testReference512');
-        $date = new \DateTime('+1 second');
-        $this->expectException(\InvalidArgumentException::class);
+        $date = new DateTimeImmutable('+1 second');
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("From date must be before To date");
-        $spec->setDateFilters($date, new \DateTime('now'));
+        $spec->setDateFilters($date, new DateTimeImmutable('now'));
     }
 
-    public function testCannotSetFromDateThatIsAfterToDate()
+    public function testCannotSetFromDateThatIsAfterToDate(): void
     {
         $spec = new ReportSpecification('testReference512');
-        $date = new \DateTimeImmutable('-1 day');
-        $this->expectException(\InvalidArgumentException::class);
+        $date = new DateTimeImmutable('-1 day');
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("From date must be before To date");
         $spec->setDateFilters($date->add(new \DateInterval('PT1S')), $date);
     }
 
-    public function testCannotSetToDateThatIsBeforeFromDate()
+    public function testCannotSetToDateThatIsBeforeFromDate(): void
     {
         $spec = new ReportSpecification('testReference512');
-        $date = new \DateTimeImmutable('-1 day');
-        $this->expectException(\InvalidArgumentException::class);
+        $date = new DateTimeImmutable('-1 day');
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("From date must be before To date");
         $spec->setDateFilters($date, $date->sub(new \DateInterval('PT1S')));
     }

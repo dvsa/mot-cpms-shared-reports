@@ -7,21 +7,21 @@ namespace SharedReport\Entity;
  *
  * @package SharedReport\Entity
  */
-class AvailableReport
+final class AvailableReport
 {
     /** @var  string Name of the report */
-    protected $name;
+    protected string $name;
     /** @var  string */
-    protected $description;
+    protected string $description;
     /** @var  string The code/reference used for this report on the remote service */
-    protected $reference;
+    protected string $reference;
 
     /**
-     * @param        $name
-     * @param        $reference
+     * @param string $name
+     * @param string $reference
      * @param string $description
      */
-    public function __construct($name, $reference, $description = '')
+    public function __construct(string $name, string $reference, string $description = '')
     {
         $this->name        = $name;
         $this->reference   = $reference;
@@ -31,7 +31,7 @@ class AvailableReport
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -39,7 +39,7 @@ class AvailableReport
     /**
      * @return string
      */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
@@ -47,7 +47,7 @@ class AvailableReport
     /**
      * @return string
      */
-    public function getReference()
+    public function getReference(): string
     {
         return $this->reference;
     }

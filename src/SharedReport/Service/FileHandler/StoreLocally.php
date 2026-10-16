@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SharedReport\Service\FileHandler;
 
 /**
@@ -7,22 +9,23 @@ namespace SharedReport\Service\FileHandler;
  *
  * @package SharedReport\Service\FileHandler
  */
-class StoreLocally implements FileHandlerInterface
+final class StoreLocally implements FileHandlerInterface
 {
-    /** @var  string */
-    protected $filename;
+    protected string $filename;
 
-    public function __construct($filename)
+    public function __construct(string $filename)
     {
         $this->filename = $filename;
     }
 
     /**
-     * @param resource $stream
+     * @param mixed $stream
      *
      * @return string
+     * @psalm-suppress PossiblyUnusedReturnValue
      */
-    public function handleFile($stream)
+    #[\Override]
+    public function handleFile($stream): string
     {
         if (is_resource($stream) === false) {
             throw new \InvalidArgumentException('Expected a resource');
@@ -40,7 +43,8 @@ class StoreLocally implements FileHandlerInterface
         return $this->filename;
     }
 
-    public function getCachedFile()
+    #[\Override]
+    public function getCachedFile(): bool|string
     {
         if (file_exists($this->filename)) {
             return $this->filename;

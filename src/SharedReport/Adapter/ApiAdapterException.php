@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SharedReport\Adapter;
 
 /**
@@ -7,7 +9,6 @@ namespace SharedReport\Adapter;
  *
  * @package SharedReport\Adapter
  */
-class ApiAdapterException extends \RuntimeException
+final class ApiAdapterException extends \RuntimeException
 {
-
 }

@@ -1,23 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SharedReport\Adapter\Request;
 
-use DateTime;
+use DateTimeImmutable;
 use DateTimeInterface;
+use DateTimeZone;
 
 /**
  * Class ReportSpecification
  *
  * @package SharedReport\Adapter\Request
  */
-class ReportSpecification
+final class ReportSpecification
 {
-    private $reference;
-    private $format;
-    private $toDate;
-    private $fromDate;
+    private mixed $reference;
+    private string $format;
+    private DateTimeImmutable $toDate;
+    private DateTimeImmutable $fromDate;
 
-    public function __construct($typeReference, $format = 'csv')
+    public function __construct(mixed $typeReference, string $format = 'csv')
     {
         $this->reference = $typeReference;
         $this->format    = $format;
@@ -27,7 +30,7 @@ class ReportSpecification
     /**
      * @return string
      */
-    public function getFormat()
+    public function getFormat(): string
     {
         return $this->format;
     }
@@ -35,7 +38,7 @@ class ReportSpecification
     /**
      * @return mixed
      */
-    public function getTypeReference()
+    public function getTypeReference(): mixed
     {
         return $this->reference;
     }
@@ -43,7 +46,7 @@ class ReportSpecification
     /**
      * @return DateTimeInterface The to date filter in UTC timezone
      */
-    public function getToDateFilter()
+    public function getToDateFilter(): DateTimeInterface
     {
         return $this->toDate;
     }
@@ -51,7 +54,7 @@ class ReportSpecification
     /**
      * @return DateTimeInterface The from date filter in UTC timezone
      */
-    public function getFromDateFilter()
+    public function getFromDateFilter(): DateTimeInterface
     {
         return $this->fromDate;
     }
@@ -59,12 +62,12 @@ class ReportSpecification
     /**
      * Sets date filters. Automatically converts them to UTC internally.
      *
-     * @param DateTimeInterface|DateTime $fromDate
-     * @param DateTimeInterface|DateTime $toDate
+     * @param DateTimeInterface $fromDate
+     * @param DateTimeInterface $toDate
      *
-     * @throws
+     * @throws \Exception
      */
-    public function setDateFilters(DateTimeInterface $fromDate, DateTimeInterface $toDate)
+    public function setDateFilters(DateTimeInterface $fromDate, DateTimeInterface $toDate): void
     {
         if ($toDate->getTimestamp() > time()) {
             throw new \InvalidArgumentException('To date cannot be in the future');
@@ -73,7 +76,7 @@ class ReportSpecification
             throw new \InvalidArgumentException('From date must be before To date');
         }
 
-        $this->toDate   = $toDate->setTimezone(new \DateTimeZone('UTC'));
-        $this->fromDate = $fromDate->setTimezone(new \DateTimeZone('UTC'));
+        $this->toDate   = new DateTimeImmutable($toDate->format('Y-m-d H:i:s'), new DateTimeZone('UTC'));
+        $this->fromDate = new DateTimeImmutable($fromDate->format('Y-m-d H:i:s'), new DateTimeZone('UTC'));
     }
 }

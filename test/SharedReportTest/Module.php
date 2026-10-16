@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SharedReportTest;
 
 use Laminas\Mvc\ModuleRouteListener;
@@ -10,14 +12,14 @@ use Laminas\Mvc\MvcEvent;
  *
  * @package SharedReportTest
  */
-class Module
+final class Module
 {
     /**
      * Bootstrap event
      *
      * @param MvcEvent $event
      */
-    public function onBootstrap(MvcEvent $event)
+    public function onBootstrap(MvcEvent $event): void
     {
         $application         = $event->getApplication();
         $eventManager        = $application->getEventManager();
@@ -28,15 +30,15 @@ class Module
     /**
      * @return mixed
      */
-    public function getConfig()
+    public function getConfig(): mixed
     {
         return include __DIR__ . '/../test.global.php';
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
-    public function getAutoloaderConfig()
+    public function getAutoloaderConfig(): array
     {
         return array(
             'Laminas\Loader\StandardAutoloader' => array(

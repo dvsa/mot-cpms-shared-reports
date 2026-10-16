@@ -1,87 +1,95 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SharedReportTest;
 
 use Laminas\Mvc\Application;
+use Laminas\ServiceManager\ServiceManager;
 
 /**
  * Test bootstrap, for setting up auto loading
  * @method setUpDatabase()
  */
-class Bootstrap
+final class Bootstrap
 {
-
-    /** @var  \Laminas\ServiceManager\ServiceManager */
-    protected static $serviceManager;
+    /** @var  ServiceManager */
+    protected static ServiceManager $serviceManager;
 
     /** @var  string This is the root directory where the test is run from which likely the test directory */
-    protected static $dir;
+    protected static string $dir;
 
-    protected static $application;
+    protected static mixed $application;
 
-    protected static $instance;
+    protected static ?self $instance = null;
 
     protected function __construct()
     {
     }
 
     /**
-     * @return self
+     * @return Bootstrap
      */
-    public static function getInstance()
+    public static function getInstance(): Bootstrap
     {
-        if (!static::$instance) {
-            static::$instance = new self();
+        if (!Bootstrap::$instance) {
+            Bootstrap::$instance = new self();
         }
 
-        return static::$instance;
+        return Bootstrap::$instance;
     }
 
     /**
-     * @param        $dir
-     * @param string $testModule
+     * @param string $dir
+     * @param mixed $testModule
      */
-    public function init($dir, $testModule = null)
+    public function init(string $dir, mixed $testModule = null): void
     {
-        static::$dir = $dir;
+        Bootstrap::$dir = $dir;
 
         $this->setPaths();
 
-        $zf2ModulePaths = array(dirname(dirname($dir)));
-        if (($path = static::findParentPath('vendor'))) {
+        $zf2ModulePaths = array(dirname($dir, 2));
+        if (false !== ($path = Bootstrap::findParentPath('vendor'))) {
             $zf2ModulePaths[] = $path;
         }
-        if (($path = static::findParentPath('src')) !== $zf2ModulePaths[0]) {
+        if (($path = Bootstrap::findParentPath('src')) !== $zf2ModulePaths[0]) {
             $zf2ModulePaths[] = $path;
         }
 
         $zf2ModulePaths[] = './';
 
-        $config = include $dir . '/../config/application.config.php';
+        /** @var mixed $configRaw */
+        $configRaw = include $dir . '/../config/application.config.php';
+        $config = is_array($configRaw) ? $configRaw : [];
+        /** @var array<string,mixed> $config */
 
         if (!empty($testModule)) {
             foreach ((array)$testModule as $mod) {
-                if (!in_array($mod, $config['modules'])) {
-                    $config['modules'][] = $mod;
+                $modules = isset($config['modules']) && is_array($config['modules']) ? $config['modules'] : [];
+                if (!in_array($mod, $modules, true)) {
+                    $modules[] = $mod;
+                    $config['modules'] = $modules;
                 }
             }
         }
 
         include $dir . '/../init_autoloader.php';
 
+        // Application::init requires an array; ensure $config is an array at this point
         $application    = Application::init($config);
         $serviceManager = $application->getServiceManager();
 
-        static::$serviceManager = $serviceManager;
-        static::$application    = $application;
+        Bootstrap::$serviceManager = $serviceManager;
+        Bootstrap::$application    = $application;
     }
 
     /**
      * set paths
      */
-    protected function setPaths()
+    protected function setPaths(): void
     {
-        $basePath = realpath(static::$dir) . '/';
+        $basePath = realpath(Bootstrap::$dir) . '/';
 
         set_include_path(
             implode(
@@ -94,11 +102,14 @@ class Bootstrap
             )
         );
 
-        if (file_exists(static::$dir . "/autoload_classmap.php")) {
-            $classList = include static::$dir . "/autoload_classmap.php";
+        if (file_exists(Bootstrap::$dir . "/autoload_classmap.php")) {
+            $classList = include Bootstrap::$dir . "/autoload_classmap.php";
+            if (!is_array($classList)) {
+                $classList = [];
+            }
 
             spl_autoload_register(
-                function ($class) use ($classList, $basePath) {
+                function ($class) use ($classList) {
                     if (isset($classList[$class])) {
                         include $classList[$class];
                     } else {
@@ -117,35 +128,14 @@ class Bootstrap
      *
      * @return boolean|string false if the path cannot be found
      */
-    protected function findParentPath($path)
+    protected function findParentPath(string $path): bool|string
     {
-        $srcDir = realpath(static::$dir . '/../');
+        $srcDir = realpath(Bootstrap::$dir . '/../');
+
+        if ($srcDir === false) {
+            return false;
+        }
 
         return $srcDir . '/' . $path;
     }
-
-    /**
-     * @return \Laminas\ServiceManager\ServiceManager
-     */
-    public function getServiceManager()
-    {
-        return static::$serviceManager;
-    }
-
-    /**
-     * @return mixed
-     */
-    public static function getApplication()
-    {
-        return self::$application;
-    }
-
-    private function __clone()
-    {
-    }
 }
-
-$path = realpath(__DIR__ . '/../');
-
-chdir(dirname($path));
-Bootstrap::getInstance()->init($path, array('SharedReportTest'));
