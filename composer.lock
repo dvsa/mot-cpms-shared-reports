@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "af02c7e4025fda702e2844bc2a63750a",
+    "content-hash": "c463d2eb281f5cc0bd09a413e1efaa7c",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -6447,20 +6447,20 @@
         },
         {
             "name": "dvsa/mot-cpms-common",
-            "version": "v3.0.1",
+            "version": "v3.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dvsa/mot-cpms-common.git",
-                "reference": "e585f95b18cdcde92506e408c18cd9faeecc7253"
+                "reference": "c5f627eda9df77b373431b902f10f00ee0af9acc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dvsa/mot-cpms-common/zipball/e585f95b18cdcde92506e408c18cd9faeecc7253",
-                "reference": "e585f95b18cdcde92506e408c18cd9faeecc7253",
+                "url": "https://api.github.com/repos/dvsa/mot-cpms-common/zipball/c5f627eda9df77b373431b902f10f00ee0af9acc",
+                "reference": "c5f627eda9df77b373431b902f10f00ee0af9acc",
                 "shasum": ""
             },
             "require": {
-                "dvsa/mot-logger": "^3.3",
+                "dvsa/mot-logger": "^3.3.1",
                 "laminas-api-tools/api-tools-versioning": "^1.4",
                 "laminas/laminas-authentication": "^2.8",
                 "laminas/laminas-dependency-plugin": "^2.6.0",
@@ -6474,22 +6474,22 @@
             "require-dev": {
                 "captainhook/captainhook": "^5.16",
                 "captainhook/plugin-composer": "^5.3",
-                "dvsa/coding-standards": "^2.0",
+                "dvsa/coding-standards": "^2.1",
+                "friendsofphp/php-cs-fixer": "^3.95",
                 "laminas/laminas-component-installer": "^3.4.0",
                 "laminas/laminas-test": "^4.0.0",
-                "phpstan/phpstan": "^1.12",
+                "phpstan/phpstan": "^2.2",
                 "phpunit/phpunit": "^9.5",
-                "squizlabs/php_codesniffer": "^3.10"
+                "squizlabs/php_codesniffer": "^4.0.2.0",
+                "vimeo/psalm": "^6.13"
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "CpmsCommon\\": "src/CpmsCommon/",
-                    "CpmsCommonTest\\": "test/CpmsCommonTest/"
+                    "CpmsCommon\\": "src/CpmsCommon/"
                 },
                 "classmap": [
-                    "./Module.php",
-                    "./test/CpmsCommonTest/Module.php"
+                    "./Module.php"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -6499,9 +6499,9 @@
             "description": "Contains common code shared by CPMS projects",
             "support": {
                 "issues": "https://github.com/dvsa/mot-cpms-common/issues",
-                "source": "https://github.com/dvsa/mot-cpms-common/tree/v3.0.1"
+                "source": "https://github.com/dvsa/mot-cpms-common/tree/v3.0.2"
             },
-            "time": "2026-07-28T10:05:34+00:00"
+            "time": "2026-10-16T08:43:59+00:00"
         },
         {
             "name": "dvsa/mot-cpms-payment-test",

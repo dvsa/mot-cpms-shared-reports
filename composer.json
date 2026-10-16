@@ -18,7 +18,7 @@
         "captainhook/plugin-composer": "^5.3",
         "dvsa/coding-standards": "^2.1",
         "dvsa/mot-cpms-payment-test": "^3.0.0",
-        "dvsa/mot-cpms-common": "^3.0.1",
+        "dvsa/mot-cpms-common": "^3.0.2",
         "friendsofphp/php-cs-fixer": "^3.95",
         "phpstan/phpstan": "^2.3",
         "phpunit/phpunit": "^11.5",
