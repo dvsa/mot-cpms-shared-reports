@@ -5,6 +5,8 @@ namespace SharedReport\Entity;
 /**
  * Class AvailableReport
  *
+ * @api
+ *
  * @package SharedReport\Entity
  */
 final class AvailableReport

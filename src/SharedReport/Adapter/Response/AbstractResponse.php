@@ -7,6 +7,8 @@ namespace SharedReport\Adapter\Response;
 /**
  * Class AbstractResponse
  *
+ * @api
+ *
  * @package SharedReport\Adapter\Response
  */
 abstract class AbstractResponse

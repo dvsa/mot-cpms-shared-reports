@@ -9,6 +9,8 @@ use SharedReport\Entity\AvailableReport;
 /**
  * Class AvailableReports
  *
+ * @api
+ *
  * @package SharedReport\Adapter\Response
  */
 final class AvailableReports extends AbstractResponse

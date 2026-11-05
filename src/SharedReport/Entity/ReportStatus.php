@@ -9,6 +9,8 @@ use DateTimeInterface;
 /**
  * Class ReportStatus
  *
+ * @api
+ *
  * @package SharedReport\Entity
  */
 final class ReportStatus

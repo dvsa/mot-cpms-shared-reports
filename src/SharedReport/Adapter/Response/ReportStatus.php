@@ -9,6 +9,8 @@ use DateTimeImmutable;
 /**
  * Class ReportStatus
  *
+ * @api
+ *
  * @package SharedReport\Adapter\Response
  */
 final class ReportStatus extends AbstractResponse
