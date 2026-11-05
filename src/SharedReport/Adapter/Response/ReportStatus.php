@@ -13,39 +13,18 @@ use DateTimeImmutable;
  */
 final class ReportStatus extends AbstractResponse
 {
-    protected bool $complete;
-    protected string $reference;
-    protected int $totalRowCount;
-    protected int $processedRowCount;
-    protected int $downloadFileSize;
-    protected string $reportTypeName;
-    protected string $reportTypeCode;
-    protected DateTimeImmutable $fromDateFilter;
-    protected DateTimeImmutable $toDateFilter;
-
     public function __construct(
-        bool $success,
-        string $reference,
-        string $reportTypeName,
-        string $reportTypeCode,
-        DateTimeImmutable $fromDateFilter,
-        DateTimeImmutable $toDateFilter,
-        bool $complete,
-        int $totalRowCount,
-        int $processedRowCount,
-        int $downloadFileSize
-    ) {
-        $this->success           = $success;
-        $this->reference         = $reference;
-        $this->reportTypeName    = $reportTypeName;
-        $this->reportTypeCode    = $reportTypeCode;
-        $this->fromDateFilter    = $fromDateFilter;
-        $this->toDateFilter      = $toDateFilter;
-        $this->complete          = $complete;
-        $this->totalRowCount     = $totalRowCount;
-        $this->processedRowCount = $processedRowCount;
-        $this->downloadFileSize  = $downloadFileSize;
-    }
+        protected bool $success,
+        protected string $reference,
+        protected string $reportTypeName,
+        protected string $reportTypeCode,
+        protected DateTimeImmutable $fromDateFilter,
+        protected DateTimeImmutable $toDateFilter,
+        protected bool $complete,
+        protected int $totalRowCount,
+        protected int $processedRowCount,
+        protected int $downloadFileSize
+    ) { }
 
     /**
      * @return bool
