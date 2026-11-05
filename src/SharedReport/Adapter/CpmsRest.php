@@ -134,7 +134,6 @@ final class CpmsRest implements ReportServiceAdapterInterface
         $response = $this->apiService->get($endpoint, ApiService::SCOPE_REPORT);
         $this->validateResponse($response);
 
-        /** @var array<string,mixed> $response */
         $reportType = isset($response['report_type']) && is_string($response['report_type']) ? $response['report_type'] : '';
         $reportTypeCode = isset($response['report_type_code']) && is_scalar($response['report_type_code']) ? (string) $response['report_type_code'] : '';
 
