@@ -26,7 +26,8 @@ final class ReportStatus extends AbstractResponse
         protected int $totalRowCount,
         protected int $processedRowCount,
         protected int $downloadFileSize
-    ) { }
+    ) {
+    }
 
     /**
      * @return bool

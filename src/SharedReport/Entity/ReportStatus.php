@@ -24,7 +24,8 @@ final class ReportStatus
         private int $processedRows,
         private bool $readyForDownload,
         private int $downloadFileSize
-    ) {}
+    ) {
+    }
 
     /**
      * @return int

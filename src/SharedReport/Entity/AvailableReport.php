@@ -15,7 +15,8 @@ final class AvailableReport
         protected string $name,
         protected string $reference,
         protected string $description = ''
-    ) {}
+    ) {
+    }
 
     /**
      * @return string
