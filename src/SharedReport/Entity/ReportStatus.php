@@ -9,47 +9,22 @@ use DateTimeInterface;
 /**
  * Class ReportStatus
  *
+ * @api
+ *
  * @package SharedReport\Entity
  */
 final class ReportStatus
 {
-    private int $totalRows;
-    private int $processedRows;
-    private string $reference;
-    private DateTimeInterface $fromDateFilter;
-    private DateTimeInterface $toDateFilter;
-    private bool $readyForDownload;
-    private int $downloadFileSize;
-    private AvailableReport $reportDetails;
-
-    /**
-     * @param string            $reference
-     * @param AvailableReport   $reportDetails
-     * @param DateTimeInterface $fromDateFilter
-     * @param DateTimeInterface $toDateFilter
-     * @param int               $totalRows
-     * @param int               $processedRows
-     * @param bool              $readyForDownload
-     * @param int               $downloadFileSize
-     */
     public function __construct(
-        string $reference,
-        AvailableReport $reportDetails,
-        DateTimeInterface $fromDateFilter,
-        DateTimeInterface $toDateFilter,
-        int $totalRows,
-        int $processedRows,
-        bool $readyForDownload,
-        int $downloadFileSize
+        private string $reference,
+        private AvailableReport $reportDetails,
+        private DateTimeInterface $fromDateFilter,
+        private DateTimeInterface $toDateFilter,
+        private int $totalRows,
+        private int $processedRows,
+        private bool $readyForDownload,
+        private int $downloadFileSize
     ) {
-        $this->reportDetails    = $reportDetails;
-        $this->fromDateFilter   = $fromDateFilter;
-        $this->toDateFilter     = $toDateFilter;
-        $this->totalRows        = $totalRows;
-        $this->processedRows    = $processedRows;
-        $this->reference        = $reference;
-        $this->readyForDownload = $readyForDownload;
-        $this->downloadFileSize = $downloadFileSize;
     }
 
     /**
